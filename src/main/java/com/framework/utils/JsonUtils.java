@@ -1,5 +1,6 @@
 package com.framework.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.framework.tests.User;
@@ -23,6 +24,13 @@ public class JsonUtils {
 
     public static <T> String convertObjectToJson(T object) throws IOException {
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+    }
+    public static <T> T convertJsonToObject(String json, Class<T> clazz) throws JsonProcessingException {
+        return mapper.readValue(json, clazz);
+    }
+    public static <T> List<T> convertJsonToList(String json, Class<T> clazz) throws JsonProcessingException {
+        JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, clazz);
+        return mapper.readValue(json, type);
     }
 
 }

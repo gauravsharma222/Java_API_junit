@@ -1,12 +1,15 @@
 package com.framework.tests;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.framework.listeners.ExtentReportListener;
 import com.framework.config.EnvironmentConfig;
 import com.framework.reports.ExtentReportManager;
 import com.framework.reports.ReportHelper;
+import com.framework.tests.POJO.Product;
 import com.framework.utils.JsonUtils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -82,5 +85,15 @@ public class ApiTest {
 
         ReportHelper.log().info("Step 4: Received response code = " + responseCode);
         ReportHelper.log().pass("✅ User posted successfully");
+    }
+    @Test
+    void testGetAPIData() throws JsonProcessingException {
+        ReportHelper.log().info("Step 1: Calling endpoint https://api.restful-api.dev/objects");
+        String endpoint = "https://api.restful-api.dev/objects";
+        Response response = given().when().get(endpoint).then().statusCode(200).extract().response();
+        String responseBody =  response.getBody().asString();
+        List<Product> products = JsonUtils.convertJsonToList(responseBody,Product.class);
+        assertNotNull(products.get(0).getId());
+        System.out.println(products.get(0).getId());
     }
 }
